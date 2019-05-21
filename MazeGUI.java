@@ -68,7 +68,7 @@ public class MazeGUI extends JFrame implements ActionListener {
 	private static final int MIN_FRAMES_PER_SECOND = 0;
 
 	/** The maximum frames per second at which the simulation will run. */
-	private static final int MAX_FRAMES_PER_SECOND = 100;
+	private static final int MAX_FRAMES_PER_SECOND = 300;
 
 	/** The numerator for delay calculations. */
 	private static final int MY_DELAY_NUMERATOR = 1000;
@@ -372,18 +372,13 @@ public class MazeGUI extends JFrame implements ActionListener {
 		/** An automatically generated serialUID. */
 		private static final long serialVersionUID = 726349612L;
 
-		/** The font used by this panel. */
+		/** The font and colors used by this panel. */
 		private final Font myFont = new Font("SansSerif", Font.BOLD, 9);
-
 		private final Color COLOR_WALL = Color.BLACK;
-
 		private final Color COLOR_FLOOR = Color.WHITE;
-
 		private final Color COLOR_PATH = Color.BLUE.darker().darker();
-
+		
 		private BufferedImage buffimage;
-
-
 		Vertex<Cell> start;
 		Vertex<Cell> finish;
 		boolean isSolution;
@@ -443,7 +438,9 @@ public class MazeGUI extends JFrame implements ActionListener {
 					gc.drawLine(0, y, w, y);
 				}
 			}
+			// Draw a blank white buffered image on the screen
 			g2.drawImage(buffimage, null, 0, 0);
+
 			// #########################################################
 			// ##                 Draw the walls
 			// #########################################################
@@ -461,18 +458,6 @@ public class MazeGUI extends JFrame implements ActionListener {
 						drawWall(g2, topy, bottomy, leftx, rightx, currentCell, currentVertex);
 					}
 				}
-//				for(Vertex<Cell> currentVertex: vertexPrinter) {
-//					if (currentVertex != null) {
-//						// Ordinate ourselves with the coordin8tes            
-//						final int topy = (currentVertex.value.getY() * SQUARE_SIZE);
-//						final int bottomy = topy + SQUARE_SIZE;
-//						final int leftx = currentVertex.value.getX() * SQUARE_SIZE;
-//						final int rightx = leftx + SQUARE_SIZE;
-//
-//						Cell currentCell = new Cell(currentVertex.value.getX(), currentVertex.value.getY());
-//						drawWall(g2, topy, bottomy, leftx, rightx, currentCell, currentVertex);
-//					}
-//				}
 			}// End of draw a single vertex
 
 			// #########################################################
@@ -514,8 +499,6 @@ public class MazeGUI extends JFrame implements ActionListener {
 					}
 				}
 			}
-
-
 		}
 
 		private void drawSolution(final Graphics2D g2) {
@@ -527,15 +510,10 @@ public class MazeGUI extends JFrame implements ActionListener {
 					if (v1 != null) {
 						g2.setStroke(new BasicStroke(SQUARE_SIZE/4));
 						g2.setColor(COLOR_PATH);
-						//                            g2.drawLine(leftx, topy, leftx, bottomy);
-						//                            g2.draw(new Line2D.Double(leftx, topy, leftx, bottomy));
 						if (prev != null) {
-							
 							g2.draw(new Line2D.Double((prev.value.getX() * SQUARE_SIZE)-(SQUARE_SIZE/2) + SQUARE_SIZE, ((prev.value.getY() * SQUARE_SIZE)) - (SQUARE_SIZE/2) + SQUARE_SIZE,
 									(v1.value.getX() * SQUARE_SIZE)-(SQUARE_SIZE/2) + SQUARE_SIZE, ((v1.value.getY() * SQUARE_SIZE)) - (SQUARE_SIZE/2) + SQUARE_SIZE));
-							
 						}
-						//                            g2.fill3DRect(leftx+(SQUARE_SIZE/2), topy-(SQUARE_SIZE/2), 10, 10, true);
 						prev = v1;
 					}
 
@@ -546,9 +524,8 @@ public class MazeGUI extends JFrame implements ActionListener {
 		private void drawWall(final Graphics2D g2, final int topy, final int bottomy,
 				final int leftx, final int rightx, Cell currentCell,
 				Vertex<Cell> currentVertex) {
+			// Create a buffered image to draw the lines (walls) on
 			Graphics2D gc = buffimage.createGraphics();
-//			g2.setColor(COLOR_WALL);
-//			g2.setStroke(STROKE);
 			gc.setColor(COLOR_WALL);
 			gc.setStroke(STROKE);
 			Cell northNeighbor = maze.getNorthNeighbor(currentCell);
@@ -557,41 +534,22 @@ public class MazeGUI extends JFrame implements ActionListener {
 			Cell westNeighbor = maze.getWestNeighbor(currentCell);
 
 			if(northNeighbor == null || currentVertex == null || !maze.graph.isAdjacent(currentCell, northNeighbor)) {
-				//                if (!currentVertex.value.equals(maze.mazeStart)) {
 				Shape line = new Line2D.Double(leftx, topy, rightx, topy);
-//				if (!shapes.containsKey(line)) {
-//					shapes.put(line, line);
-//				}
-//				g2.draw(shapes.get(line));
 				gc.draw(line);
-				//                }
 			}
 			if(eastNeighbor == null || currentVertex == null || !currentVertex.containsEdge(currentCell, eastNeighbor)) {
 				Shape line = new Line2D.Double(rightx, topy, rightx, bottomy);
-//				if (!shapes.containsKey(line)) {
-//					shapes.put(line, line);
-//				}
-//				g2.draw(shapes.get(line));
 				gc.draw(line);
 			} 
 			if(southNeighbor == null || currentVertex == null || !currentVertex.containsEdge(currentCell, southNeighbor)) {
-				//                if (!currentVertex.value.equals(maze.mazeFinish)) {
 				Shape line = new Line2D.Double(leftx, bottomy, rightx, bottomy);
-//				if (!shapes.containsKey(line)) {
-//					shapes.put(line, line);
-//				}
-//				g2.draw(shapes.get(line));
 				gc.draw(line);
-				//                }
 			} 
 			if(westNeighbor == null || currentVertex == null || !currentVertex.containsEdge(currentCell, westNeighbor)) {
 				Shape line = new Line2D.Double(leftx, topy, leftx, bottomy);
-//				if (!shapes.containsKey(line)) {
-//					shapes.put(line, line);
-//				}
-//				g2.draw(shapes.get(line));
 				gc.draw(line);
 			}
+			// Use the current Graffics 2d object and draw the buffered image on the screen
 			g2.drawImage(buffimage, null, 0, 0);
 		}
 
@@ -629,7 +587,6 @@ public class MazeGUI extends JFrame implements ActionListener {
 				} else if (message.equals(Maze.COMMAND_MAZE_COMPLETE)) {
 					isMazeRecieved = true;
 					isAnimating = true;
-
 				}
 			}
 
@@ -642,8 +599,7 @@ public class MazeGUI extends JFrame implements ActionListener {
 					Vertex<Cell> vertex = (Vertex<Cell>) arg;
 					vertexPrinterQueue.offer(vertex);
 				}
-			} 
-
+			}
 		}
 
 		public void setStart(Vertex<Cell> start) {
